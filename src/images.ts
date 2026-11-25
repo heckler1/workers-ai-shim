@@ -1,8 +1,6 @@
 import { errorResponse, normalizeUpstreamError } from "./errors";
+import { MODEL_RE } from "./models";
 import { upstreamHeaders, type Upstream } from "./proxy";
-
-// Each segment starts with a word char, so "." / ".." can never walk the upstream path.
-const MODEL_RE = /^@cf\/\w[\w.-]*\/\w[\w.-]*$/;
 
 interface ImageRequest {
   model?: unknown;
@@ -56,11 +54,11 @@ export async function generateImage(req: Request, up: Upstream): Promise<Respons
   if (!size) return errorResponse(400, "`size` must look like 1024x1024.");
 
   const { body, headers } = buildImageInput(model, prompt, size[0], size[1]);
-  const h = upstreamHeaders(req.headers, up, up.imageDirect);
+  const h = upstreamHeaders(req.headers, up, up.direct);
   h.delete("content-length"); // the caller's JSON body is replaced by ours
   h.delete("content-type");
   for (const [k, v] of Object.entries(headers)) h.set(k, v);
-  const res = await fetch(up.imageUrl(model), { method: "POST", headers: h, body });
+  const res = await fetch(up.nativeUrl(model), { method: "POST", headers: h, body });
   if (!res.ok) return normalizeUpstreamError(res);
 
   let b64: string | undefined;

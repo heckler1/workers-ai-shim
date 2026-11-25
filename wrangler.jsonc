@@ -9,8 +9,8 @@
   "vars": {
     "GATEWAY_ID": "test-gateway",
     // "direct": the gateway's native /workers-ai/@cf/<model> route refused this account's token (401),
-    // so images go straight to /ai/run. "gateway" only once that route is confirmed to work.
-    "IMAGE_UPSTREAM": "direct"
+    // so images, speech and transcriptions go straight to /ai/run. "gateway" only once that route is confirmed to work.
+    "NATIVE_UPSTREAM": "direct"
   }
   // Optional secret, only for an authenticated gateway: wrangler secret put CF_AIG_TOKEN
 }

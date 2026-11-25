@@ -15,3 +15,11 @@ curl -fsS "${auth[@]}" -H 'content-type: application/json' "$SHIM_URL/v1/images/
   -d '{"model":"@cf/black-forest-labs/flux-2-klein-9b","prompt":"a small red fox, flat illustration","size":"1024x1024"}' \
   | python3 -c 'import sys,json,base64; open("out.png","wb").write(base64.b64decode(json.load(sys.stdin)["data"][0]["b64_json"]))'
 ls -l out.png
+echo "== speech -> out.mp3"
+curl -fsS "${auth[@]}" -H 'content-type: application/json' "$SHIM_URL/v1/audio/speech" \
+  -d '{"model":"@cf/deepgram/aura-2-en","input":"Hello from the shim.","voice":"luna"}' -o out.mp3
+ls -l out.mp3
+echo "== voices"; curl -fsS "${auth[@]}" "$SHIM_URL/v1/audio/voices?model=@cf/deepgram/aura-2-en" | head -c 300; echo
+echo "== transcription of out.mp3 (turbo, verbose_json)"
+curl -fsS "${auth[@]}" "$SHIM_URL/v1/audio/transcriptions" -F file=@out.mp3 -F model=@cf/openai/whisper-large-v3-turbo \
+  -F response_format=verbose_json -F 'timestamp_granularities[]=word' | head -c 600; echo
