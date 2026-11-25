@@ -1,3 +1,7 @@
+# pnpm 9 (Cloudflare Workers Builds) refuses a workspace file without `packages`.
+packages:
+  - "."
+# pnpm 10+: dependencies allowed to run install scripts.
 allowBuilds:
   esbuild: true
   workerd: true
