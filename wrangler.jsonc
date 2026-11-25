@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "workers-ai-shim",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  // ACCOUNT_ID is set in the dashboard (Settings → Variables), not here; keep_vars stops
+  // `wrangler deploy` from deleting it. Locally it comes from .dev.vars.
+  "keep_vars": true,
+  "vars": {
+    "GATEWAY_ID": "test-gateway",
+    // "direct": the gateway's native /workers-ai/@cf/<model> route refused this account's token (401),
+    // so images go straight to /ai/run. "gateway" only once that route is confirmed to work.
+    "IMAGE_UPSTREAM": "direct"
+  }
+  // Optional secret, only for an authenticated gateway: wrangler secret put CF_AIG_TOKEN
+}

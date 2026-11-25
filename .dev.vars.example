@@ -1,0 +1,3 @@
+ACCOUNT_ID=your-cloudflare-account-id
+# Only for an authenticated gateway:
+# CF_AIG_TOKEN=your-ai-gateway-auth-token
