@@ -23,11 +23,15 @@ function isOpenAiShaped(text: string): boolean {
   }
 }
 
-/** Message from a Cloudflare `{errors:[{message}]}` body, else raw text (<=500 chars), else a generic one. */
+/**
+ * Message from a Cloudflare `{errors:[{message}]}` body or a Workers AI `{name:"AiError", description, message}`
+ * one (what the gateway's OpenAI-compatible route answers), else raw text (<=500 chars), else a generic one.
+ */
 export function upstreamMessage(text: string, status: number): string {
   try {
-    const m = (JSON.parse(text) as { errors?: { message?: unknown }[] } | null)?.errors?.[0]?.message;
-    if (typeof m === "string" && m.trim()) return m;
+    const j = JSON.parse(text) as { errors?: { message?: unknown }[]; description?: unknown; message?: unknown } | null;
+    const m = [j?.errors?.[0]?.message, j?.description, j?.message].find((x) => typeof x === "string" && x.trim());
+    if (typeof m === "string") return m;
   } catch {
     /* not JSON: fall through to raw text */
   }

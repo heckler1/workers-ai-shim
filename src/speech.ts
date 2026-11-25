@@ -1,4 +1,5 @@
 import { errorResponse, normalizeUpstreamError } from "./errors";
+import { SPEECH_MODELS } from "./models";
 import { upstreamHeaders, type Upstream } from "./proxy";
 
 interface Aura {
@@ -25,7 +26,7 @@ export const AURA: Record<string, Aura> = {
     voices: "angus asteria arcas orion orpheus athena luna zeus perseus helios hera stella".split(" "),
   },
 };
-export const SPEECH_MODELS = Object.keys(AURA);
+export { SPEECH_MODELS };
 
 /**
  * Verified live: the upstream content-type is always audio/mpeg whatever the encoding, so the shim sets it.

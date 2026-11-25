@@ -1,6 +1,6 @@
 import { errorResponse, normalizeUpstreamError } from "./errors";
 import type { Env } from "./index";
-import { MODEL_RE } from "./models";
+import { audioRouteFor, MODEL_RE } from "./models";
 
 const HOP_BY_HOP = ["connection", "keep-alive", "proxy-authenticate", "proxy-authorization", "te", "trailer", "transfer-encoding", "upgrade", "host"];
 
@@ -45,6 +45,8 @@ export async function passthrough(req: Request, path: string, up: Upstream): Pro
   if (typeof model !== "string" || !MODEL_RE.test(model)) {
     return errorResponse(400, "`model` is required and must be a Cloudflare-hosted model (@cf/<author>/<name>).");
   }
+  const audioRoute = audioRouteFor(model);
+  if (audioRoute) return errorResponse(400, `${model} is an audio model; use ${audioRoute}, not ${path}.`, "model_not_supported");
   const res = await fetch(`${up.base}${path}`, { method: "POST", headers: upstreamHeaders(req.headers, up), body: text });
   if (res.status >= 400) return normalizeUpstreamError(res);
   const headers = new Headers(res.headers);

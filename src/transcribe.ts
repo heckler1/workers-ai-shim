@@ -1,11 +1,12 @@
 import { errorResponse, normalizeUpstreamError } from "./errors";
 import { toBase64 } from "./images";
+import { TRANSCRIPTION_MODELS } from "./models";
 import { upstreamHeaders, type Upstream } from "./proxy";
 
 const WHISPER = "@cf/openai/whisper";
 const TURBO = "@cf/openai/whisper-large-v3-turbo";
 const NOVA = "@cf/deepgram/nova-3";
-export const TRANSCRIPTION_MODELS = [WHISPER, TURBO, NOVA];
+export { TRANSCRIPTION_MODELS };
 
 const MAX_BYTES = 25 * 1024 * 1024;
 const FORMATS = ["json", "text", "srt", "vtt", "verbose_json"];

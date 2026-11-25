@@ -124,6 +124,15 @@ describe("passthrough", () => {
     expect(hdr(c, "content-type")).toBe("application/json");
   });
 
+  it("refuses audio models on text routes with a pointer to the audio route", async () => {
+    for (const [model, route] of [["@cf/deepgram/aura-2-en", "/v1/audio/speech"], ["@cf/openai/whisper", "/v1/audio/transcriptions"]]) {
+      const res = await post("/v1/chat/completions", { model, messages: [] });
+      expect(res.status).toBe(400);
+      expect(((await res.json()) as any).error.message).toContain(route);
+    }
+    expect(upstreamCalls()).toHaveLength(0);
+  });
+
   it("rejects a missing or non-@cf model with 400 and no upstream call", async () => {
     for (const body of [{}, { model: "gpt-4o" }, { model: 5 }, { model: "@cf/a/../b" }]) {
       const res = await post("/v1/chat/completions", body);
@@ -161,6 +170,7 @@ describe("error normalization", () => {
     ['{"errors":[{"code":1,"message":"bad thing"}]}', "bad thing"],
     ["plain failure", "plain failure"],
     ["", "Upstream returned 500"],
+    ['{"name":"AiError","internalCode":8006,"message":"AiError: AiError: missing field `text`","description":"missing field `text`"}', "missing field `text`"],
     ['{"errors":[]}', '{"errors":[]}'],
     ["x".repeat(900), "x".repeat(500)],
   ])("body %s", async (text, expected) => {
