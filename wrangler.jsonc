@@ -6,6 +6,13 @@
   // ACCOUNT_ID is set in the dashboard (Settings → Variables), not here; keep_vars stops
   // `wrangler deploy` from deleting it. Locally it comes from .dev.vars.
   "keep_vars": true,
+  // Workers Logs: one record per request (status, timing, errors) in the dashboard.
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    }
+  },
   "vars": {
     "GATEWAY_ID": "test-gateway",
     // "direct": the gateway's native /workers-ai/@cf/<model> route refused this account's token (401),
